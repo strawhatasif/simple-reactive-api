@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -26,13 +27,7 @@ public class UsersService {
 
     public Mono<ResponseEntity<Users>> getSingleUser(String id) {
         return usersWebClient.retrieveOneUser(id)
-                .map(response -> {
-                    if (response.email == null) {
-                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-                    }
-                    else {
-                        return ResponseEntity.status(HttpStatus.OK).body(response);
-                    }
-                });
+                .map(response -> (StringUtils.isEmpty(response.email) ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(response) :
+                       ResponseEntity.status(HttpStatus.OK).body(response)));
     }
 }
