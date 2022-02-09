@@ -19,9 +19,9 @@ public class AlbumWebClient {
     private CircuitBreakerFactory circuitBreakerFactory;
 
     public Flux<Album> getAlbums() {
-        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitBreaker");
+        var circuitBreaker = circuitBreakerFactory.create("circuitBreaker");
 
-        WebClient webClient = WebClient.create("http://localhost:8080/");
+        var webClient = WebClient.create("http://localhost:8080/");
 
         //Invoke an endpoint that always returns a 500 status code
         return circuitBreaker.run(() ->
@@ -38,7 +38,7 @@ public class AlbumWebClient {
     }
 
     public Flux<Album> getDefaultAlbumList() {
-        WebClient webClient = WebClient.create("https://jsonplaceholder.typicode.com/");
+        var webClient = WebClient.create("https://jsonplaceholder.typicode.com/");
 
         return webClient.get()
                 .uri("albums/")
