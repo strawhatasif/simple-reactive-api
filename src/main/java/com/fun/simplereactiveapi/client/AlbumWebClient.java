@@ -30,10 +30,11 @@ public class AlbumWebClient {
                         .accept(APPLICATION_JSON)
                         .exchangeToFlux(clientResponse -> {
                             if (HttpStatus.INTERNAL_SERVER_ERROR.equals(clientResponse.statusCode())) {
-                                log.warn("failing back to default method to retrieve album information");
+                                log.warn("Failing back to default method to retrieve album information");
                                 return getDefaultAlbumList();
                             }
-                            return clientResponse.bodyToFlux(Album.class);
+                            //this is to ensure a different response when the circuit breaker works.
+                            return getSingleAlbum();
                         }));
     }
 
@@ -42,6 +43,21 @@ public class AlbumWebClient {
 
         return webClient.get()
                 .uri("albums/")
+                .accept(APPLICATION_JSON)
+                .retrieve()
+                .bodyToFlux(Album.class);
+    }
+
+    /**
+     * Just for fun! Don't do this in production!!!
+     * Ideally, this should be a <pre>Mono<T></pre>.
+     * @return
+     */
+    public Flux<Album> getSingleAlbum() {
+        var webClient = WebClient.create("https://jsonplaceholder.typicode.com/");
+
+        return webClient.get()
+                .uri("albums/1")
                 .accept(APPLICATION_JSON)
                 .retrieve()
                 .bodyToFlux(Album.class);
