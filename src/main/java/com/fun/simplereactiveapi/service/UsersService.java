@@ -26,7 +26,7 @@ public class UsersService {
 
     public Mono<ResponseEntity<Users>> getSingleUser(String id) {
         return usersWebClient.retrieveOneUser(id)
-                .map(response -> (StringUtils.hasText(response.email) ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(response) :
+                .map(response -> (StringUtils.hasText(response.email()) ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(response) :
                        ResponseEntity.status(HttpStatus.OK).body(response)));
     }
 }
